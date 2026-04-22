@@ -17,7 +17,10 @@ import { useAuth } from "@clerk/nextjs";
 
 function LinksDropdown() {
   const { isSignedIn, userId } = useAuth();
-  const isAdmin = userId === process.env.ADMIN_USER_ID;
+  const isAdmin = userId === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
+  // console.log('admin',isAdmin)
+  // console.log('user',userId)
+  // console.log('adminid',process.env.NEXT_PUBLIC_ADMIN_USER_ID)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
