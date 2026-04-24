@@ -1,3 +1,4 @@
+"use server";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 
@@ -10,8 +11,8 @@ export const fetchFeaturedProducts = async () => {
   return products;
 };
 
-export const fetchAllProducts = ({ search = "" }: { search: string }) => {
-  return prisma.product.findMany({
+export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
+  return await prisma.product.findMany({
     where: {
       OR: [
         { name: { contains: search, mode: "insensitive" } },
@@ -34,4 +35,11 @@ export const fetchSingleProduct = async (productId: string) => {
     return redirect("/products");
   }
   return product;
+};
+
+export const createProductAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  return { message: "product created" };
 };
