@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { productSchema } from "./schemas";
+import { productSchema, validateWithZodSchema } from "./schemas";
 
 //ดึง User
 const getAuthUser = async () => {
@@ -11,7 +11,12 @@ const getAuthUser = async () => {
   return user;
 };
 
-const renderError = (error: unknown): { message: string } => {};
+const renderError = (error: unknown): { message: string } => {
+  console.log(error);
+  return {
+    message: error instanceof Error ? error.message : "an error occurred",
+  };
+};
 
 export const fetchFeaturedProducts = async () => {
   const products = await prisma.product.findMany({
@@ -55,7 +60,16 @@ export const createProductAction = async (
   const user = await getAuthUser();
   try {
     const rawData = Object.fromEntries(formData);
-    const validatedFiedls = productSchema.parse(rawData);
+    const validatedFields = validateWithZodSchema(productSchema, rawData);
+
+    await prisma.product.create({
+      data: {
+        ...validatedFields,
+        image: "/images/hero2.jpg",
+        clerkId: user.id,
+      },
+    });
+
     return { message: "product created" };
   } catch (error) {
     return renderError(error);
