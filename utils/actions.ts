@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { productSchema, validateWithZodSchema } from "./schemas";
+import { imageScheme, productSchema, validateWithZodSchema } from "./schemas";
 
 //ดึง User
 const getAuthUser = async () => {
@@ -60,8 +60,10 @@ export const createProductAction = async (
   const user = await getAuthUser();
   try {
     const rawData = Object.fromEntries(formData);
+    const file = formData.get("image") as File;
     const validatedFields = validateWithZodSchema(productSchema, rawData);
-
+    const validateFile = validateWithZodSchema(imageScheme, { image: file });
+    console.log(validateFile);
     await prisma.product.create({
       data: {
         ...validatedFields,
