@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { imageScheme, productSchema, validateWithZodSchema } from "./schemas";
+import { uploadImage } from "./supabase";
 
 //ดึง User
 const getAuthUser = async () => {
@@ -62,18 +63,18 @@ export const createProductAction = async (
     const rawData = Object.fromEntries(formData);
     const file = formData.get("image") as File;
     const validatedFields = validateWithZodSchema(productSchema, rawData);
-    const validateFile = validateWithZodSchema(imageScheme, { image: file });
-    console.log(validateFile);
+    const validatedFile = validateWithZodSchema(imageScheme, { image: file });
+    const fullPath = await uploadImage(validatedFile.image);
+
     await prisma.product.create({
       data: {
         ...validatedFields,
-        image: "/images/hero2.jpg",
+        image: fullPath,
         clerkId: user.id,
       },
     });
-
-    return { message: "product created" };
   } catch (error) {
     return renderError(error);
   }
+  redirect("/admin/products");
 };
