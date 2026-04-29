@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { imageScheme, productSchema, validateWithZodSchema } from "./schemas";
 import { uploadImage } from "./supabase";
+import { revalidatePath } from "next/cache";
 
 //ดึง User
 const getAuthUser = async () => {
@@ -94,4 +95,20 @@ export const fetchAdminProduct = async () => {
     },
   });
   return products;
+};
+
+export const deleteProductAction = async (prevState: { productId: string }) => {
+  const { productId } = prevState;
+  await getAdminUser();
+  try {
+    await prisma.product.delete({
+      where: {
+        id: productId,
+      },
+    });
+    revalidatePath("/admin/products");
+    return { message: "product removed" };
+  } catch (error) {
+    return renderError(error);
+  }
 };

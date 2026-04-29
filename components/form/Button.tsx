@@ -2,7 +2,8 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { LuSquare, LuTrash2 } from "react-icons/lu";
+import { IoReload } from "react-icons/io5";
 
 type btnSize = "default" | "lg" | "sm";
 
@@ -27,7 +28,7 @@ export function SubmitButton({
     >
       {pending ? (
         <>
-          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          <IoReload className="mr-2 h-4 w-4 animate-spin" />
           Please wait...
         </>
       ) : (
@@ -36,3 +37,31 @@ export function SubmitButton({
     </Button>
   );
 }
+
+type actionType = "edit" | "delete";
+
+export const IconButton = ({ actionType }: { actionType: actionType }) => {
+  const { pending } = useFormStatus();
+
+  const renderIcon = () => {
+    switch (actionType) {
+      case "edit":
+        return <LuSquare />;
+      case "delete":
+        return <LuTrash2 />;
+      default:
+        const never: never = actionType;
+        throw new Error(`Invalid action type: ${never}`);
+    }
+  };
+  return (
+    <Button
+      type="submit"
+      size="icon"
+      variant="link"
+      className="p-2 cursor-pointer"
+    >
+      {pending ? <IoReload className="animate-spin" /> : renderIcon()}
+    </Button>
+  );
+};
