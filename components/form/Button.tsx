@@ -2,7 +2,7 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { LuSquare, LuTrash2 } from "react-icons/lu";
+import { LuSquarePen, LuTrash2 } from "react-icons/lu";
 import { IoReload } from "react-icons/io5";
 
 type btnSize = "default" | "lg" | "sm";
@@ -46,7 +46,7 @@ export const IconButton = ({ actionType }: { actionType: actionType }) => {
   const renderIcon = () => {
     switch (actionType) {
       case "edit":
-        return <LuSquare />;
+        return <LuSquarePen />;
       case "delete":
         return <LuTrash2 />;
       default:

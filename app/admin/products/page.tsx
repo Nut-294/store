@@ -1,3 +1,5 @@
+import { IconButton } from "@/components/form/Button";
+import FormContainer from "@/components/form/FormContainer";
 import EmptyList from "@/components/global/EmptyList";
 import {
   Table,
@@ -8,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchAdminProduct } from "@/utils/actions";
+import { deleteProductAction, fetchAdminProduct } from "@/utils/actions";
 import { formatCurrency } from "@/utils/format";
 import Link from "next/link";
 
@@ -46,7 +48,12 @@ async function AdminProductsPage() {
                 </TableCell>
                 <TableCell>{company}</TableCell>
                 <TableCell>{formatCurrency(price)}</TableCell>
-                <TableCell className="flex items-center gap-x-2"></TableCell>
+                <TableCell className="flex items-center gap-x-2">
+                  <Link href={`/admin/products/${productId}/edit`}>
+                    <IconButton actionType="edit" />
+                  </Link>
+                  <DeleteProduct productId={productId} />
+                </TableCell>
               </TableRow>
             );
           })}
@@ -55,4 +62,14 @@ async function AdminProductsPage() {
     </section>
   );
 }
+
+function DeleteProduct({ productId }: { productId: string }) {
+  const deleteProduct = deleteProductAction.bind(null, { productId });
+  return (
+    <FormContainer action={deleteProduct}>
+      <IconButton actionType="delete" />
+    </FormContainer>
+  );
+}
+
 export default AdminProductsPage;
