@@ -10,12 +10,16 @@ export const supabase = createClient(
 export const uploadImage = async (image: File) => {
   const timestamp = Date.now();
   const newName = `${timestamp}-${image.name}`;
-
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(newName, image, {
-      cacheControl: "3600",
-    });
+  const { data } = await supabase.storage.from(bucket).upload(newName, image, {
+    cacheControl: "3600",
+  });
   if (!data) throw new Error("Image upload failed");
   return supabase.storage.from(bucket).getPublicUrl(newName).data.publicUrl;
+};
+
+export const deleteImage = async (url: string) => {
+  //ตัด url ที่ครั้งที่เจอ / และเอาตัวสุดท้าย ของ array
+  const imageName = url.split("/").pop();
+  if (!imageName) throw new Error("Invalid URL");
+  return supabase.storage.from(bucket).remove([imageName])
 };
