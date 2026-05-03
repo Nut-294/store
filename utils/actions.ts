@@ -181,9 +181,9 @@ export const updateProductImageAction = async (
 
 export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
   const user = await getAuthUser();
-  const favorite = await prisma.product.findFirst({
+  const favorite = await prisma.favorite.findFirst({
     where: {
-      id: productId,
+      productId,
       clerkId: user.id,
     },
     select: {
