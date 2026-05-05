@@ -193,6 +193,35 @@ export const fetchFavoriteId = async ({ productId }: { productId: string }) => {
   return favorite?.id || null;
 };
 
-export const toggleFavoriteAction = async () => {
-  return { message: "Toggle Favorite Action" };
+export const toggleFavoriteAction = async (prevState: {
+  productId: string;
+  favoriteId: string | null;
+  pathname: string;
+}) => {
+  const user = await getAuthUser();
+  const { productId, favoriteId, pathname } = prevState;
+  try {
+    if (favoriteId) {
+      await prisma.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      await prisma.favorite.create({
+        data: {
+          productId,
+          clerkId: user.id,
+        },
+      });
+    }
+    revalidatePath(pathname);
+    return {
+      message: favoriteId
+        ? "removed from favorite product"
+        : "added to favorite product",
+    };
+  } catch (error) {
+    return renderError(error);
+  }
 };
