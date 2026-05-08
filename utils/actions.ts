@@ -238,3 +238,18 @@ export const fetchUserFavorites = async () => {
   });
   return favorites;
 };
+
+export const createReviewAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  return { message: "review submitted successfully" };
+};
+
+export const fetchProductReviews = async () => {};
+// ใช้หน้า /review
+export const fetchProductReviewsByUser = async () => {};
+export const deleteReviewAction = async () => {};
+// ค้นหา review ที่มี
+export const findExistingReviews = async () => {};
+export const fetchProductRating = async () => {};
