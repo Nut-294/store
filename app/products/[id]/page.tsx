@@ -6,6 +6,8 @@ import { fetchSingleProduct } from "@/utils/actions";
 import { formatCurrency } from "@/utils/format";
 import Image from "next/image";
 import ShareButton from "@/components/single-product/ShareButton";
+import SubmitReview from "@/components/reviews/SubmitReview";
+import ProductReviews from "@/components/reviews/ProductReviews";
 
 async function SingleProductPage({
   params,
@@ -50,6 +52,8 @@ async function SingleProductPage({
           <AddToCart productId={id} />
         </div>
       </div>
+      <ProductReviews productId={id} />
+      <SubmitReview productId={id} />
     </section>
   );
 }
