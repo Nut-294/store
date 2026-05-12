@@ -336,5 +336,15 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
   }
 };
 
-// ค้นหา review ที่มี
-export const findExistingReviews = async () => {};
+//ค้นหารีวิว user ใน product นี้
+export const findExistingReviews = async (
+  userId: string,
+  productId: string
+) => {
+  return prisma.review.findFirst({
+    where: {
+      clerkId: userId,
+      productId,
+    },
+  });
+};

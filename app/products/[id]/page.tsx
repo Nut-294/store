@@ -2,12 +2,13 @@ import FavoriteToggleButton from "@/components/products/FavoriteToggleButton";
 import AddToCart from "@/components/single-product/AddToCart";
 import BreadCrumbs from "@/components/single-product/BreadCrumbs";
 import ProductRating from "@/components/single-product/ProductRating";
-import { fetchSingleProduct } from "@/utils/actions";
+import { fetchSingleProduct, findExistingReviews } from "@/utils/actions";
 import { formatCurrency } from "@/utils/format";
 import Image from "next/image";
 import ShareButton from "@/components/single-product/ShareButton";
 import SubmitReview from "@/components/reviews/SubmitReview";
 import ProductReviews from "@/components/reviews/ProductReviews";
+import { auth } from "@clerk/nextjs/server";
 
 async function SingleProductPage({
   params,
@@ -19,6 +20,11 @@ async function SingleProductPage({
   const product = await fetchSingleProduct(id);
   const { name, image, company, description, price } = product;
   const dollarsAmount = formatCurrency(price);
+  const { userId } = await auth();
+  //User เคยรีวิว ไปแล้วหรือยัง ถ้ายังไม่เคยให้แสดง form ถ้าเคยให้ซ่อน form
+  //reviewDoesNotExist = ยังไม่เคยรีวิว
+  const reviewDoesNotExist =
+    userId && !(await findExistingReviews(userId, product.id));
   return (
     <section>
       <BreadCrumbs name={product.name} />
@@ -53,7 +59,8 @@ async function SingleProductPage({
         </div>
       </div>
       <ProductReviews productId={id} />
-      <SubmitReview productId={id} />
+      {/* ถ้ายังไม่เคยให้แสดง form | ถ้าเคยให้ซ่อน form */}
+      {reviewDoesNotExist && <SubmitReview productId={id} />}
     </section>
   );
 }
