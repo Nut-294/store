@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { currentUser, auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
   imageScheme,
@@ -347,3 +347,30 @@ export const findExistingReviews = async (
     },
   });
 };
+
+export const fetchCartItems = async () => {
+  const { userId } = await auth();
+  const cart = await prisma.cart.findFirst({
+    where: {
+      clerkId: userId ?? "",
+    },
+    select: {
+      numItemsInCart: true,
+    },
+  });
+  return cart?.numItemsInCart || 0;
+};
+
+const fetchProduct = async () => {};
+
+export const fetchOrCreateCart = async () => {};
+
+const updateOrCreateCartItem = async () => {};
+
+export const updateCart = async () => {};
+
+export const addToCartAction = async () => {};
+
+export const removeCartItemAction = async () => {};
+
+export const updateCartItemAction = async () => {};
