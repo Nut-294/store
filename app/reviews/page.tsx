@@ -10,7 +10,7 @@ async function ReviewsPage() {
   }
   return (
     <>
-      <SectionTitle text="Yout Reviews" />
+      <SectionTitle text="Your Reviews" />
       <section className="grid md:grid-cols-2 gap-8 mt-4">
         {reviews.map((review) => {
           const { comment, rating } = review;

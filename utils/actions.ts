@@ -10,7 +10,6 @@ import {
 } from "./schemas";
 import { deleteImage, uploadImage } from "./supabase";
 import { revalidatePath } from "next/cache";
-import { count } from "console";
 
 //ดึง User
 const getAuthUser = async () => {

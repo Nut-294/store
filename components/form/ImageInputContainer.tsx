@@ -17,7 +17,7 @@ type ImageInputContainerProps = {
 
 function ImageInputContainer(props: ImageInputContainerProps) {
   const { image, name, action, text, children } = props;
-  console.log(image)
+  // console.log(image)
   const [isUpdateFormVisible, setUpdateFormVisible] = useState(false);
   return (
     <div className="mb-8">
