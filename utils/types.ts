@@ -1,3 +1,10 @@
+import { Prisma } from "@/lib/generated/prisma/client";
+
+//type ของ CartItem ที่ include product มาด้วย
+export type CartItemWithProduct = Prisma.CartItemGetPayload<{
+  include: { product: true };
+}>;
+
 export type actionFunction = (
   prevState: any,
   formData: FormData
