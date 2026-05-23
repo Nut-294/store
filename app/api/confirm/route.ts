@@ -1,12 +1,20 @@
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-import { redirect } from "next/navigation";
-import { type NextRequest } from "next/server";
+
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const GET = async (req: NextRequest) => {
   const { searchParams } = new URL(req.url);
-  const session_id = searchParams.get("session_id") as string;
+
+  const session_id = searchParams.get("session_id");
+
+  if (!session_id) {
+    return NextResponse.json(
+      { message: "Session ID required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
@@ -15,7 +23,7 @@ export const GET = async (req: NextRequest) => {
     const cartId = session.metadata?.cartId;
 
     if (session.status === "complete") {
-      return prisma.order.update({
+      await prisma.order.update({
         where: {
           id: orderId,
         },
@@ -23,19 +31,23 @@ export const GET = async (req: NextRequest) => {
           isPaid: true,
         },
       });
+
+      await prisma.cart.delete({
+        where: {
+          id: cartId,
+        },
+      });
+
+      return NextResponse.redirect(new URL("/orders", req.url));
     }
 
-    await prisma.cart.delete({
-      where: {
-        id: cartId,
-      },
-    });
+    return NextResponse.redirect(new URL("/checkout", req.url));
   } catch (error) {
     console.log(error);
-    return Response.json(null, {
-      status: 500,
-      statusText: "Internal Server Error",
-    });
+
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
-  redirect("/orders");
 };
