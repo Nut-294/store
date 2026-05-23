@@ -14,6 +14,7 @@ export const POST = async (req: NextRequest) => {
       id: orderId,
     },
   });
+
   const cart = await prisma.cart.findUnique({
     where: {
       id: cartId,
@@ -26,6 +27,7 @@ export const POST = async (req: NextRequest) => {
       },
     },
   });
+
   if (!order || !cart) {
     return Response.json(null, {
       status: 404,
@@ -50,7 +52,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
-      metadate: { orderId, cartId },
+      metadata: { orderId, cartId },
       line_items: line_items,
       mode: "payment",
       return_url: `${origin}/api/confirm?session_id={CHECKOUT_SESSION_ID}`,
